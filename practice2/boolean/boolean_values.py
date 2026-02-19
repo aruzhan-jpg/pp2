@@ -1,0 +1,5 @@
+print(10 > 9)
+print(10 == 9)
+print(10 < 9)
+print(255 < 5)
+print(4/2 == 2)
