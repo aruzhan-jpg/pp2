@@ -1,0 +1,5 @@
+print("Hello World!")
+print("How r u!")
+print("My name is Aruzhan!")
+print("I love cakes!")
+print("Hqweqweqw!")
