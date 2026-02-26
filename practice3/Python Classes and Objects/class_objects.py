@@ -23,8 +23,6 @@ class Person:
 
 p1 = Person("John", 36)
 
-del p1
-
 print(p1)
 
 #4
