@@ -25,3 +25,41 @@ print("Random choice:", random.choice(numbers))
 
 random.shuffle(numbers)
 print("Shuffled list:", numbers)
+
+
+#ex1
+# Convert degree to radian
+degree = 15
+radian = degree * (math.pi / 180)
+
+print("Input degree:", degree)
+print("Output radian:", round(radian, 6))
+
+
+#ex2
+# Calculate the area of a trapezoid
+height = 5
+base1 = 5
+base2 = 6
+
+area_trapezoid = (base1 + base2) / 2 * height
+print("the area of a trapezoid:", area_trapezoid)
+
+
+#ex3
+# Calculate the area of a regular polygon
+n = 4
+side = 25
+
+area_polygon = (n * side**2) / (4 * math.tan(math.pi / n))
+
+print("The area of the polygon is:", int(area_polygon))
+
+
+#ex4
+# Calculate the area of a parallelogram
+base = 5
+height_para = 6
+
+area_parallelogram = base * height_para
+print("Expected Output:", float(area_parallelogram))
