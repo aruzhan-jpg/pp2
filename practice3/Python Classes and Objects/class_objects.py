@@ -13,20 +13,6 @@ print(p1.x)
 
 #3
 
-class Person:
-  def __init__(self, name, age):
-    self.name = name
-    self.age = age
-
-  def myfunc(self):
-    print("Hello my name is " + self.name)
-
-p1 = Person("John", 36)
-
-print(p1)
-
-#4
-
 class MyClass:
   x = 5
 
@@ -38,7 +24,7 @@ print(p1.x)
 print(p2.x)
 print(p3.x)
 
-#5
+#4
 
 class Person:
   pass

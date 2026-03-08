@@ -42,3 +42,10 @@ def my_function(*numbers):
   return max_num
 
 print(my_function(3, 7, 2, 9, 1))
+
+#6
+
+def my_function(**kwargs):
+    print(kwargs)
+
+my_function(name="Ali", age=20)
