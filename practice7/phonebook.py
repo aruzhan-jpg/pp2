@@ -1,68 +1,79 @@
-from connect import connect
 import csv
+from connect import connect
 
+
+# 1. Создание таблицы
 def create_table():
     conn = connect()
     cur = conn.cursor()
 
     cur.execute("""
-    CREATE TABLE IF NOT EXISTS phonebook (
-        id SERIAL PRIMARY KEY,
-        first_name VARCHAR(100),
-        phone VARCHAR(20) UNIQUE
-    );
+        CREATE TABLE IF NOT EXISTS contacts (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100),
+            phone VARCHAR(20)
+        )
     """)
 
     conn.commit()
     cur.close()
     conn.close()
-    print("Table created!")
+    print("Table created")
 
-def insert_from_console():
+
+# 2. Добавление вручную
+def insert_console():
     name = input("Enter name: ")
     phone = input("Enter phone: ")
 
     conn = connect()
     cur = conn.cursor()
 
-    try:
-        cur.execute(
-            "INSERT INTO phonebook (first_name, phone) VALUES (%s, %s)",
-            (name, phone)
-        )
-        conn.commit()
-        print("Contact added!")
-    except:
-        print("Error")
-
-    cur.close()
-    conn.close()
-
-def insert_from_csv():
-    conn = connect()
-    cur = conn.cursor()
-
-    with open("contacts.csv", "r") as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            try:
-                cur.execute(
-                    "INSERT INTO phonebook (first_name, phone) VALUES (%s, %s)",
-                    (row["first_name"], row["phone"])
-                )
-            except:
-                pass
+    cur.execute(
+        "INSERT INTO contacts (name, phone) VALUES (%s, %s)",
+        (name, phone)
+    )
 
     conn.commit()
     cur.close()
     conn.close()
-    print("CSV added!")
+    print("Added")
 
+
+# 3. Загрузка из двух CSV файлов
+def insert_from_multiple_csv(files):
+    conn = connect()
+    cur = conn.cursor()
+
+    for filename in files:
+        with open(filename, 'r', encoding='utf-8') as file:
+            reader = csv.reader(file)
+            next(reader, None)  # пропустить заголовок
+
+            for row in reader:
+                if len(row) < 2:
+                    continue
+
+                name = row[0].strip()
+                phone = row[1].strip()
+
+                cur.execute(
+                    "INSERT INTO contacts (name, phone) VALUES (%s, %s)",
+                    (name, phone)
+                )
+
+    conn.commit()
+    cur.close()
+    conn.close()
+    print("CSV data inserted")
+
+
+# 4. Показать все
 def show_all():
     conn = connect()
     cur = conn.cursor()
 
-    cur.execute("SELECT * FROM phonebook")
+    cur.execute("SELECT * FROM contacts")
     rows = cur.fetchall()
 
     for row in rows:
@@ -71,63 +82,71 @@ def show_all():
     cur.close()
     conn.close()
 
+
+# 5. Обновление
 def update_contact():
-    name = input("Enter name: ")
-    new_phone = input("New phone: ")
+    name = input("Enter name to update: ")
+    new_phone = input("Enter new phone: ")
 
     conn = connect()
     cur = conn.cursor()
 
     cur.execute(
-        "UPDATE phonebook SET phone = %s WHERE first_name = %s",
+        "UPDATE contacts SET phone = %s WHERE name = %s",
         (new_phone, name)
     )
 
     conn.commit()
     cur.close()
     conn.close()
-    print("Updated!")
+    print("Updated")
 
+
+# 6. Удаление
 def delete_contact():
-    name = input("Enter name: ")
+    name = input("Enter name to delete: ")
 
     conn = connect()
     cur = conn.cursor()
 
-    cur.execute("DELETE FROM phonebook WHERE first_name = %s", (name,))
+    cur.execute(
+        "DELETE FROM contacts WHERE name = %s",
+        (name,)
+    )
 
     conn.commit()
     cur.close()
     conn.close()
-    print("Deleted!")
+    print("Deleted")
 
-def menu():
-    while True:
-        print("\n1.Create table")
-        print("2.Insert console")
-        print("3.Insert CSV")
-        print("4.Show all")
-        print("5.Update")
-        print("6.Delete")
-        print("7.Exit")
 
-        choice = input("Choose: ")
+# МЕНЮ
+while True:
+    print("""
+1. Create table
+2. Insert console
+3. Insert CSV (2 files)
+4. Show all
+5. Update
+6. Delete
+7. Exit
+""")
 
-        if choice == "1":
-            create_table()
-        elif choice == "2":
-            insert_from_console()
-        elif choice == "3":
-            insert_from_csv()
-        elif choice == "4":
-            show_all()
-        elif choice == "5":
-            update_contact()
-        elif choice == "6":
-            delete_contact()
-        elif choice == "7":
-            break
+    choice = input("Choose: ")
 
-if __name__ == "__main__":
-    menu()
-
+    if choice == "1":
+        create_table()
+    elif choice == "2":
+        insert_console()
+    elif choice == "3":
+        insert_from_multiple_csv(["contacts.csv", "contacts1.csv"])
+    elif choice == "4":
+        show_all()
+    elif choice == "5":
+        update_contact()
+    elif choice == "6":
+        delete_contact()
+    elif choice == "7":
+        break
+    else:
+        print("Wrong choice")
