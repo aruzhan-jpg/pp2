@@ -30,14 +30,10 @@ clock = pygame.time.Clock()
 font = pygame.font.SysFont("Arial", 24)
 
 # -------------------- FOOD TYPES --------------------
-# Each type of food has:
-# score -> how many points it gives
-# color -> food color
-# time  -> how long this food stays on screen (milliseconds)
 FOOD_TYPES = [
-    {"score": 1, "color": RED, "time": 7000},
-    {"score": 2, "color": YELLOW, "time": 5000},
-    {"score": 3, "color": BLUE, "time": 3000},
+    {"score": 1, "color": RED, "time": 10000},
+    {"score": 2, "color": YELLOW, "time": 10000},
+    {"score": 3, "color": BLUE, "time": 10000},
 ]
 
 
@@ -135,7 +131,6 @@ def main():
                     dx, dy = 1, 0
 
         # -------------------- FOOD TIMER --------------------
-        # If food is not eaten in time, replace it
         current_time = pygame.time.get_ticks()
         if current_time - food["spawn_time"] > food["time"]:
             food = generate_food(snake)
@@ -143,15 +138,19 @@ def main():
         # -------------------- MOVE SNAKE --------------------
         head_x, head_y = snake[0]
 
-        # Classic snake border wrap:
-        # if snake leaves one side, it appears on the opposite side
-        new_head = (
-            (head_x + dx) % COLS,
-            (head_y + dy) % ROWS
-        )
+        # New head position WITHOUT wraparound
+        new_head = (head_x + dx, head_y + dy)
+
+        # -------------------- BORDER COLLISION --------------------
+        # Game over if snake hits wall
+        if (
+            new_head[0] < 0 or new_head[0] >= COLS or
+            new_head[1] < 0 or new_head[1] >= ROWS
+        ):
+            game_over(score)
+            return
 
         # -------------------- SELF COLLISION --------------------
-        # Game over if snake hits itself
         if new_head in snake:
             game_over(score)
             return
@@ -161,13 +160,9 @@ def main():
 
         # -------------------- FOOD CHECK --------------------
         if new_head == food["pos"]:
-            # Add score depending on food weight
             score += food["score"]
-
-            # Generate new food
             food = generate_food(snake)
         else:
-            # If food was not eaten, remove tail
             snake.pop()
 
         # -------------------- DRAW --------------------
